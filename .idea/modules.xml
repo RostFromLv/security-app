@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/security-app.iml" filepath="$PROJECT_DIR$/.idea/security-app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/security-test-app/security-test-app.iml" filepath="$PROJECT_DIR$/security-test-app/security-test-app.iml" />
+    </modules>
+  </component>
+</project>

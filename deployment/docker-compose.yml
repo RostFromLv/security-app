@@ -1,0 +1,34 @@
+version: '3.0'
+
+services:
+  postgres-sec:
+    container_name: postgres-db
+    restart: always
+    image: postgres:13.6
+    ports:
+      - '5432:5432'
+    networks:
+      - security-network
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+#Service cont
+  security-app:
+    container_name: security-app
+    build:
+      context: ../security-test-app
+      dockerfile: Dockerfile
+    ports:
+      - '8070:8070'
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-sec:5432/users
+    depends_on:
+      - postgres-sec
+    networks:
+      - security-network
+
+networks:
+  security-network:
+    driver: bridge
