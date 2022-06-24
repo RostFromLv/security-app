@@ -1,15 +1,15 @@
-create table car
+create table cars
 (
-    id            INT PRIMARY KEY NOT NULL,
+    id            serial PRIMARY KEY,
     car_brand     VARCHAR(128)    NOT NULL,
     year          INT             NOT NULL,
     engine_volume FLOAT           NOT NULL,
     body_type     VARCHAR         NOT NULL
 );
 
-create table laptop
+create table computers
 (
-    id          INT PRIMARY KEY NOT NULL,
+    id          serial PRIMARY KEY,
     brand       VARCHAR(128)    NOT NULL,
     ram         INT             NOT NULL,
     memory      INT             NOT NULL,

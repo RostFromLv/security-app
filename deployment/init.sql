@@ -1,1 +1,1 @@
-CREATE DATABASE test_security;
+CREATE DATABASE cars ;

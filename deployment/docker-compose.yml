@@ -15,7 +15,7 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
 #Service cont
-  security-app:
+  security-service:
     container_name: security-app
     build:
       context: ../security-test-app
@@ -23,7 +23,7 @@ services:
     ports:
       - '8070:8070'
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-sec:5432/users
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-sec:5432/cars
     depends_on:
       - postgres-sec
     networks:

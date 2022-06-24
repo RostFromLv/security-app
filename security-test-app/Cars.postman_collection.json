@@ -1,0 +1,278 @@
+{
+	"info": {
+		"_postman_id": "f125d33e-d1dc-414b-afe1-6a766586343c",
+		"name": "Cars",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "17606760"
+	},
+	"item": [
+		{
+			"name": "cars",
+			"item": [
+				{
+					"name": "Create car",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id\":1,\r\n    \"carBrand\":\"Subaru\",\r\n     \"year\": 2009,\r\n     \"engineVolume\": 1.6,\r\n     \"bodyType\": \"SEDAN\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{api-cars}}",
+							"host": [
+								"{{api-cars}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete car",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id\":1,\r\n    \"carBrand\":\"Subaru\",\r\n     \"year\": 2009,\r\n     \"engineVolume\": 1.6,\r\n     \"bodyType\": \"SEDAN\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{api-cars}}/1",
+							"host": [
+								"{{api-cars}}"
+							],
+							"path": [
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete cars",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id\":1,\r\n    \"carBrand\":\"Subaru\",\r\n     \"year\": 2009,\r\n     \"engineVolume\": 1.6,\r\n     \"bodyType\": \"SEDAN\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{api-cars}}",
+							"host": [
+								"{{api-cars}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update car",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id\":1,\r\n    \"carBrand\":\"Subaru\",\r\n     \"year\": 2005,\r\n     \"engineVolume\": 1.6,\r\n     \"bodyType\": \"SEDAN\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{api-cars}}",
+							"host": [
+								"{{api-cars}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get cars",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id\":1,\r\n    \"carBrand\":\"Subaru\",\r\n     \"year\": 2009,\r\n     \"engineVolume\": 1.6,\r\n     \"bodyType\": \"SEDAN\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{api-cars}}",
+							"host": [
+								"{{api-cars}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get car by id",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id\":1,\r\n    \"carBrand\":\"Subaru\",\r\n     \"year\": 2009,\r\n     \"engineVolume\": 1.6,\r\n     \"bodyType\": \"SEDAN\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{api-cars}}/1",
+							"host": [
+								"{{api-cars}}"
+							],
+							"path": [
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "computers",
+			"item": [
+				{
+					"name": "Create computer",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id\":1,\r\n    \"brand\": \"Dell\",\r\n    \"ram\": 8,\r\n    \"memory\": 256,\r\n    \"memoryType\":\"SSD\",\r\n    \"processor\": \"AMD\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{api-computers}}",
+							"host": [
+								"{{api-computers}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update computers",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id\":1,\r\n    \"brand\": \"Dell\",\r\n    \"ram\": 8,\r\n    \"memory\": 256,\r\n    \"memoryType\":\"SSD\",\r\n    \"processor\": \"AMD\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{api-computers}}",
+							"host": [
+								"{{api-computers}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete by id",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{api-computers}}/1",
+							"host": [
+								"{{api-computers}}"
+							],
+							"path": [
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete all",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{api-computers}}",
+							"host": [
+								"{{api-computers}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get all",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{api-computers}}",
+							"host": [
+								"{{api-computers}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get by id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{api-computers}}/1",
+							"host": [
+								"{{api-computers}}"
+							],
+							"path": [
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
