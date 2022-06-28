@@ -25,8 +25,6 @@ public class AuthService {
   }
 
   public  JwtResponse login(JwtRequest jwtRequest) throws AuthException {
-    System.out.println(jwtRequest);
-    System.out.println(jwtRequest.getEmail());
     final UserDto user = userService.findUserByEmail(jwtRequest.getEmail());
     if (user.getPassword().equals(jwtRequest.getPassword())){
       final String accessToken = jwtProvider.generateAccessToken(user);

@@ -26,9 +26,4 @@ public class UserServiceImpl extends AbstractDataService<Integer, User, UserDto>
     return  this.findById(user.getId()).get();
   }
 
-  @Override
-  @Transactional(readOnly = true)
-  public boolean existUserByEmail(String email) {
-    return userRepository.existsByEmail(email);
-  }
 }
