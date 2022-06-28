@@ -11,7 +11,7 @@ import javax.persistence.*;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "user")
+@Table(name = "users")
 public class User  implements Convertible {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,7 +21,7 @@ public class User  implements Convertible {
   @Column
   private String password;
   @Column
-  private String name;
+  private String firstName;
   @Column
   private String lastName;
 }
