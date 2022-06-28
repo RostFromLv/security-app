@@ -20,8 +20,8 @@ spring:
     password: ${spring.datasource.password}
   datasource:
     url: jdbc:postgresql://localhost:5432/cars
-    username: postgres
-    password: postgres
+    username: root
+    password: root
     driver-class-name: org.postgresql.Driver
 #Actuator props
 management:
@@ -37,3 +37,8 @@ management:
 logging:
   level:
     root: info
+
+jwt:
+  secret:
+    access: qBTmv4oXFFR2GwjexDJ4t6fsIUIUhhXqlktXjXdkcyygs8nPVEwMfo29VDRRepYDVV5IkIxBMzr7OEHXEHd37w==
+    refresh: zL1HB3Pch05Avfynovxrf/kpF9O2m4NCWKJUjEp27s9J2jEG3ifiKCGylaZ8fDeoONSTJP/wAzKawB8F9rOMNg==
