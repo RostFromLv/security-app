@@ -8,21 +8,16 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.GenericFilterBean;
 
 @Slf4j
-@Component
 public class JwtFilter  extends GenericFilterBean {
-
-  private static final String authorizationAHeader = "Authorization";
 
   private final JwtProvider provider;
 
-  @Autowired
   public JwtFilter(JwtProvider provider) {
     this.provider = provider;
   }
@@ -43,7 +38,7 @@ public class JwtFilter  extends GenericFilterBean {
   }
 
   private String getTokenFromRequest(HttpServletRequest request){
-    String bearer  = request.getHeader(authorizationAHeader);
+    String bearer  = request.getHeader(HttpHeaders.AUTHORIZATION);
     if (StringUtils.hasText(bearer) && bearer.startsWith("Bearer ")){
       return bearer.substring(7);
     }
