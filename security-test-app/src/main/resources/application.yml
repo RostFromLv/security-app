@@ -20,9 +20,14 @@ spring:
     password: ${spring.datasource.password}
   datasource:
     url: jdbc:postgresql://localhost:5432/cars
-    username: postgres
-    password: postgres
+    username: root
+    password: root
     driver-class-name: org.postgresql.Driver
+  security:
+    filter:
+      order: 5
+    user:
+      password: 123456
 #Actuator props
 management:
   endpoint:

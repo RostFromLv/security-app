@@ -33,10 +33,4 @@ public class AuthenticationControllerV1 {
   public JwtResponse getNewAccessToken(@RequestBody RefreshJwtRequest request){
     return authService.getAccessToken(request.getRefreshToken());
   }
-
-  @PostMapping
-  @ResponseStatus(HttpStatus.OK)
-  public JwtResponse getNewRefreshToken(@RequestBody RefreshJwtRequest request)  throws AuthException {
-    return authService.refresh(request.getRefreshToken());
-  }
 }

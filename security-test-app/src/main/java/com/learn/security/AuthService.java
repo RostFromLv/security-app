@@ -8,7 +8,6 @@ import java.util.HashMap;
 import java.util.Map;
 import javax.security.auth.message.AuthException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -44,27 +43,9 @@ public class AuthService {
       if(saveRefreshToke!= null && saveRefreshToke.equals(refreshToken)){
         UserDto user = userService.findUserByEmail(email);
         String accessToken = jwtProvider.generateAccessToken(user);
-        return new JwtResponse(accessToken,null);
+        return new JwtResponse(accessToken,refreshToken);
       }
     }
     return new JwtResponse(null ,null);
   }
-  public JwtResponse refresh(String refreshToken) throws AuthException {
-    if (jwtProvider.validateRefreshToken(refreshToken)){
-      Claims claims = jwtProvider.getAccessClaims(refreshToken);
-      String email = claims.getSubject();
-      String saveRefreshToken = refreshStorage.get(email);
-      if (saveRefreshToken!=null && saveRefreshToken.equals(refreshToken)){
-        UserDto user = userService.findUserByEmail(email);
-        String accessToken = jwtProvider.generateAccessToken(user);
-        String newRefreshToken = jwtProvider.generateRefreshToken(user);
-        refreshStorage.put(user.getEmail(),newRefreshToken);
-        return  new JwtResponse(accessToken,newRefreshToken);
-      }
-    }
-    throw new AuthException("Wrong  JW-TOKEN");
-  }
-
-
-
 }
