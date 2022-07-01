@@ -13,6 +13,7 @@ public class JwtAuthentication implements Authentication {
   private boolean authenticated;
   private String email;
   private String firstName;
+  private String credentials;
 
 
   @Override
@@ -22,7 +23,7 @@ public class JwtAuthentication implements Authentication {
 
   @Override
   public Object getCredentials() {
-    return null;
+    return credentials;
   }
 
   @Override

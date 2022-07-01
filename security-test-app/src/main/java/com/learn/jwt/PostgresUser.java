@@ -2,8 +2,8 @@ package com.learn.jwt;
 
 import com.learn.model.UserDto;
 import com.learn.service.UserService;
+import java.util.ArrayList;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -11,14 +11,15 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 
 @Component
-public class PersistentUserDetailsService implements UserDetailsService {
+public class PostgresUser implements UserDetailsService {
 
   private final UserService userService;
 
   @Autowired
-  private PersistentUserDetailsService(UserService userService) {
+  private PostgresUser(UserService userService) {
     this.userService = userService;
   }
+
 
 
   @Override
@@ -27,6 +28,7 @@ public class PersistentUserDetailsService implements UserDetailsService {
 
     String userPassword = userDto.getPassword();
 
-    return new User(userEmail, userPassword, AuthorityUtils.NO_AUTHORITIES);
+    User user =new User(userEmail, userPassword,new ArrayList<>());
+    return new User(userEmail, userPassword,new ArrayList<>());
   }
 }
