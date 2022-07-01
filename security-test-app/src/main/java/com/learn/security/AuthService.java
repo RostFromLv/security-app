@@ -8,13 +8,14 @@ import java.util.HashMap;
 import java.util.Map;
 import javax.security.auth.message.AuthException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
 public class AuthService {
 
   private final UserService userService;
-  private final Map<String,String> refreshStorage = new HashMap<>();
+  private final Map<String, String> refreshStorage = new HashMap<>();
   private final JwtProvider jwtProvider;
 
   @Autowired
@@ -23,15 +24,17 @@ public class AuthService {
     this.jwtProvider = jwtProvider;
   }
 
-  public  JwtResponse login(JwtRequest jwtRequest) throws AuthException {
+  public JwtResponse login(JwtRequest jwtRequest) throws AuthException {
+    BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+
     final UserDto user = userService.findUserByEmail(jwtRequest.getEmail());
-    if (user.getPassword().equals(jwtRequest.getPassword())){
+    if (encoder.matches(jwtRequest.getPassword(), user.getPassword())) {
       final String accessToken = jwtProvider.generateAccessToken(user);
       final String refreshToken = jwtProvider.generateRefreshToken(user);
       refreshStorage.put(user.getEmail(), refreshToken);
-      return  new JwtResponse(accessToken,refreshToken);
-    }else {
-      throw  new AuthException("Wrong credential(pass)");
+      return new JwtResponse(accessToken, refreshToken);
+    } else {
+      throw new AuthException("Wrong credential(pass)");
     }
   }
 

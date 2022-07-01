@@ -19,6 +19,4 @@ public class UserDto implements Convertible {
   private String firstName;
   @NotNull
   private String lastName;
-  @NotNull
-  private Integer age;
 }

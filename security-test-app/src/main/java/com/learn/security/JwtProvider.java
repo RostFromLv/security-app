@@ -73,7 +73,7 @@ public class JwtProvider implements Serializable {
           .parseClaimsJws(token);
       return true;
     } catch (ExpiredJwtException expEx) {
-      log.error("Token expired", expEx); //Throw for user?
+      log.error("Token expired", expEx);
     } catch (UnsupportedJwtException unsEx) {
       log.error("Unsupported jwt", unsEx);
     } catch (MalformedJwtException mjEx) {
