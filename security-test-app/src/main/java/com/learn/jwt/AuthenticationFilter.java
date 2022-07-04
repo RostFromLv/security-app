@@ -40,7 +40,6 @@ public class AuthenticationFilter extends OncePerRequestFilter {
       filterChain.doFilter(request, response);
       return;
     }
-
     Authentication auth = this.authenticationProvider.authenticate(authentication);
     if (auth != null) {
       SecurityContextHolder.getContext().setAuthentication(auth);

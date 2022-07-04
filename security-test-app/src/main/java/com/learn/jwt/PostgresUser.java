@@ -1,6 +1,5 @@
 package com.learn.jwt;
 
-import com.learn.model.UserDto;
 import com.learn.service.UserService;
 import java.util.ArrayList;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,11 +23,9 @@ public class PostgresUser implements UserDetailsService {
 
   @Override
   public UserDetails loadUserByUsername(String userEmail) throws UsernameNotFoundException {
-    UserDto userDto = userService.findUserByEmail(userEmail);
 
-    String userPassword = userDto.getPassword();
+    String userPassword =  userService.findUserByEmail(userEmail).getPassword();
 
-    User user =new User(userEmail, userPassword,new ArrayList<>());
     return new User(userEmail, userPassword,new ArrayList<>());
   }
 }
