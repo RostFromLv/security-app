@@ -11,7 +11,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.AuthenticationConverter;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -35,6 +35,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     http = http.cors().and().csrf().disable();
 
+
     http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
     http.exceptionHandling()
@@ -47,11 +48,26 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
 
     authenticationProvider.setUserDetailsService(userDetailsService);
-    authenticationProvider.setPasswordEncoder(new BCryptPasswordEncoder(10));
+    authenticationProvider.setPasswordEncoder(noOpPasswordEncoder());
     AuthenticationConverter converter = new BearerTokenAuthenticationConverter(jwtProvider);
     AuthenticationFilter filter = new AuthenticationFilter(converter, authenticationProvider);
 
     http.addFilterBefore(filter, UsernamePasswordAuthenticationFilter.class);
+  }
+
+  private PasswordEncoder noOpPasswordEncoder() {
+    return new PasswordEncoder() {
+
+      @Override
+      public String encode(CharSequence rawPassword) {
+        return rawPassword.toString();
+      }
+
+      @Override
+      public boolean matches(CharSequence rawPassword, String encodedPassword) {
+        return rawPassword.equals(encodedPassword);
+      }
+    };
   }
 
 

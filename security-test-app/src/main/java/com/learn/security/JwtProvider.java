@@ -44,6 +44,7 @@ public class JwtProvider implements Serializable {
         .setExpiration(accessExpiration)
         .signWith(accessSecret)
         .claim("email",userDto.getEmail())
+        .claim("password",userDto.getPassword())
         .compact();
   }
 
