@@ -1,6 +1,5 @@
 package com.learn.security;
 
-
 import com.learn.model.UserDto;
 import com.learn.service.UserService;
 import io.jsonwebtoken.Claims;
@@ -24,7 +23,7 @@ public class AuthService {
     this.jwtProvider = jwtProvider;
   }
 
-  public JwtResponse login(JwtRequest jwtRequest) throws AuthException {
+  public JwtResponse login(JwtRequest jwtRequest) throws Exception {
     BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 
     final UserDto user = userService.findUserByEmail(jwtRequest.getEmail());
@@ -38,7 +37,7 @@ public class AuthService {
     }
   }
 
-  public JwtResponse getAccessToken(String refreshToken){
+  public JwtResponse getAccessToken(String refreshToken) throws Exception {
     if (jwtProvider.validateRefreshToken(refreshToken)){
       Claims claims = jwtProvider.getRefreshClaims(refreshToken);
       String email = claims.getSubject();
