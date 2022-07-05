@@ -9,7 +9,14 @@ import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import java.io.Serializable;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.security.Key;
+import java.security.KeyFactory;
+import java.security.PrivateKey;
+import java.security.PublicKey;
+import java.security.spec.PKCS8EncodedKeySpec;
+import java.security.spec.X509EncodedKeySpec;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -34,8 +41,39 @@ public class JwtProvider implements Serializable {
     this.refreshSecret = Keys.hmacShaKeyFor(Decoders.BASE64.decode(refreshSecret));
   }
 
+  private static PrivateKey getPrivateKey(String fileName) throws Exception {
 
-  public String generateAccessToken(UserDto userDto){
+    byte[] keyBytes = Files.readAllBytes(Paths.get(fileName));
+
+    PKCS8EncodedKeySpec spec = new PKCS8EncodedKeySpec(keyBytes);
+    KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+    return  keyFactory.generatePrivate(spec);
+  }
+
+  private static PublicKey getPublicKey(String fileName) throws Exception{
+    byte[] keyBytes = Files.readAllBytes(Paths.get(fileName));
+
+    X509EncodedKeySpec spec = new X509EncodedKeySpec(keyBytes);
+    KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+    return keyFactory.generatePublic(spec);
+  }
+
+//  private static Map<String, Object> getRSAKeys() throws Exception {
+//    KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
+//    keyPairGenerator.initialize(2048);
+//    KeyPair keyPair = keyPairGenerator.generateKeyPair();
+//    PrivateKey privateKey = keyPair.getPrivate();
+//    PublicKey publicKey = keyPair.getPublic();
+//    Map<String, Object> keys = new HashMap<String, Object>();
+//    keys.put("private", privateKey);
+//    keys.put("public", publicKey);
+//    return keys;
+//  }
+
+  public String generateAccessToken(UserDto userDto) throws Exception {
+
+    System.out.println(getPublicKey("keys/id_rsa.pub"));
+
      LocalDateTime now = LocalDateTime.now();
      Instant accessExpirationInstant = now.plusDays(1).atZone(ZoneId.systemDefault()).toInstant();
      Date accessExpiration = Date.from(accessExpirationInstant);
