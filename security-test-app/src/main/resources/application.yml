@@ -21,8 +21,8 @@ spring:
     password: ${spring.datasource.password}
   datasource:
     url: jdbc:postgresql://localhost:5432/cars
-    username: root
-    password: root
+    username: postgres
+    password: postgres
     driver-class-name: org.postgresql.Driver
   security:
     oauth2:
@@ -31,9 +31,13 @@ spring:
           facebook:
             clientId: 380406904202969
             clientSecret: c0d6ddef5ea359c6747c6ead9eec8f1c
-            scope:
-              - email
-              - public_profile
+            accessTokenUri: https://graph.facebook.com/oauth/access_token
+            userAuthorizationUri: https://www.facebook.com/dialog/oauth
+            tokenName: oauth_token
+            authenticationScheme: query
+            clientAuthenticationScheme: form
+            resource:
+              userInfoUri: https://graph.facebook.com/me
     filter:
       order: 5
     user:
