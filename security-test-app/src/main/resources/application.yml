@@ -25,6 +25,15 @@ spring:
     password: root
     driver-class-name: org.postgresql.Driver
   security:
+    oauth2:
+      client:
+        registration:
+          facebook:
+            clientId: 380406904202969
+            clientSecret: c0d6ddef5ea359c6747c6ead9eec8f1c
+            scope:
+              - email
+              - public_profile
     filter:
       order: 5
     user:
@@ -42,9 +51,5 @@ management:
 #Logger props
 logging:
   level:
+    org.springframework.security: trace
     root: info
-
-jwt:
-  secret:
-    access: qBTmv4oXFFR2GwjexDJ4t6fsIUIUhhXqlktXjXdkcyygs8nPVEwMfo29VDRRepYDVV5IkIxBMzr7OEHXEHd37w==
-    refresh: zL1HB3Pch05Avfynovxrf/kpF9O2m4NCWKJUjEp27s9J2jEG3ifiKCGylaZ8fDeoONSTJP/wAzKawB8F9rOMNg==

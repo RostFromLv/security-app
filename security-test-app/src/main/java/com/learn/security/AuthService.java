@@ -3,7 +3,11 @@ package com.learn.security;
 import com.learn.model.UserDto;
 import com.learn.service.UserService;
 import io.jsonwebtoken.Claims;
+import java.io.IOException;
+import java.security.GeneralSecurityException;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import javax.security.auth.message.AuthException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +33,8 @@ public class AuthService {
     final UserDto user = userService.findUserByEmail(jwtRequest.getEmail());
     if (encoder.matches(jwtRequest.getPassword(), user.getPassword())) {
       final String accessToken = jwtProvider.generateAccessToken(user);
+
+
       final String refreshToken = jwtProvider.generateRefreshToken(user);
       refreshStorage.put(user.getEmail(), refreshToken);
       return new JwtResponse(accessToken, refreshToken);
@@ -49,5 +55,11 @@ public class AuthService {
       }
     }
     return new JwtResponse(null ,null);
+  }
+
+  public Collection<String> getAllJWK() throws GeneralSecurityException, IOException {
+    HashSet<String> jwkKeys = new HashSet<>();
+    jwkKeys.add(jwtProvider.getJWK());
+    return jwkKeys;
   }
 }
