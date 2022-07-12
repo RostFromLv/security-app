@@ -43,11 +43,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     http.authorizeRequests()
         .antMatchers("/api/v1/auth/**", "/api/v1/users/**").permitAll()
-        .anyRequest().authenticated()
-        .and()
-        .formLogin().loginPage("/login").permitAll()
-        .and()
-        .oauth2Login();
+        .anyRequest().authenticated();
+//        .and()
+//        .formLogin().loginPage("/login").permitAll()
+//        .and()
+//        .oauth2Login();
 
     DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
 
