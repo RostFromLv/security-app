@@ -15,7 +15,6 @@ public class JwtAuthentication implements Authentication {
   private String firstName;
   private String credentials;
 
-
   @Override
   public Collection<? extends GrantedAuthority> getAuthorities() {
     return null;

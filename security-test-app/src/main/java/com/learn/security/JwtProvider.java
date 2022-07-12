@@ -1,29 +1,39 @@
 package com.learn.security;
 
 import com.learn.model.UserDto;
+import com.nimbusds.jose.jwk.JWK;
+import com.nimbusds.jose.jwk.KeyUse;
+import com.nimbusds.jose.jwk.RSAKey;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.UnsupportedJwtException;
-import io.jsonwebtoken.io.Decoders;
-import io.jsonwebtoken.security.Keys;
+import java.io.BufferedReader;
+import java.io.DataInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileReader;
+import java.io.IOException;
 import java.io.Serializable;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.security.Key;
+import java.security.GeneralSecurityException;
 import java.security.KeyFactory;
-import java.security.PrivateKey;
+import java.security.KeyPair;
+import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
+import java.security.interfaces.RSAPrivateKey;
+import java.security.interfaces.RSAPublicKey;
+import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
-import javax.crypto.SecretKey;
+import java.util.UUID;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
+import org.apache.tomcat.util.codec.binary.Base64;
 import org.springframework.stereotype.Component;
 
 @Slf4j
@@ -32,82 +42,79 @@ public class JwtProvider implements Serializable {
 
   private static final long serialVersionUID = 3522491090480550716L;
 
-  private final SecretKey accessSecret;
-  private final SecretKey refreshSecret;
+  private final static String publicKeyFileName = "keys/public.pem";
+  private final static String privateKeyFileName = "keys/private.der";
 
-  public JwtProvider(@Value("${jwt.secret.access}") String accessSecret,
-                     @Value("${jwt.secret.access}") String refreshSecret) {
-    this.accessSecret = Keys.hmacShaKeyFor(Decoders.BASE64.decode(accessSecret));
-    this.refreshSecret = Keys.hmacShaKeyFor(Decoders.BASE64.decode(refreshSecret));
-  }
 
-  private static PrivateKey getPrivateKey(String fileName) throws Exception {
+  private static RSAPrivateKey getPrivateKey(String fileName)
+      throws IOException, NoSuchAlgorithmException, InvalidKeySpecException {
+    File file = new File(fileName);
+    DataInputStream dataInputStream = new DataInputStream(new FileInputStream(file));
 
-    byte[] keyBytes = Files.readAllBytes(Paths.get(fileName));
+    byte[] keyBytes = new byte[(int) file.length()];
+    dataInputStream.readFully(keyBytes);
+    dataInputStream.close();
 
-    PKCS8EncodedKeySpec spec = new PKCS8EncodedKeySpec(keyBytes);
+    PKCS8EncodedKeySpec spec  = new PKCS8EncodedKeySpec(keyBytes);
     KeyFactory keyFactory = KeyFactory.getInstance("RSA");
-    return  keyFactory.generatePrivate(spec);
+
+    return (RSAPrivateKey) keyFactory.generatePrivate(spec);
   }
 
-  private static PublicKey getPublicKey(String fileName) throws Exception{
-    byte[] keyBytes = Files.readAllBytes(Paths.get(fileName));
+  private static PublicKey getPublicKey(String fileName)
+      throws IOException, GeneralSecurityException {
+
+    String publicKeyPem = getKey(fileName);
+    publicKeyPem = publicKeyPem.replace("-----BEGIN PUBLIC KEY-----\n", "");
+    publicKeyPem = publicKeyPem.replace("-----END PUBLIC KEY-----", "");
+    byte[] keyBytes = Base64.decodeBase64(publicKeyPem);
 
     X509EncodedKeySpec spec = new X509EncodedKeySpec(keyBytes);
     KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+
     return keyFactory.generatePublic(spec);
   }
 
-//  private static Map<String, Object> getRSAKeys() throws Exception {
-//    KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
-//    keyPairGenerator.initialize(2048);
-//    KeyPair keyPair = keyPairGenerator.generateKeyPair();
-//    PrivateKey privateKey = keyPair.getPrivate();
-//    PublicKey publicKey = keyPair.getPublic();
-//    Map<String, Object> keys = new HashMap<String, Object>();
-//    keys.put("private", privateKey);
-//    keys.put("public", publicKey);
-//    return keys;
-//  }
 
   public String generateAccessToken(UserDto userDto) throws Exception {
 
-    System.out.println(getPublicKey("keys/id_rsa.pub"));
-
+    SignatureAlgorithm algorithm = SignatureAlgorithm.RS256;
      LocalDateTime now = LocalDateTime.now();
      Instant accessExpirationInstant = now.plusDays(1).atZone(ZoneId.systemDefault()).toInstant();
      Date accessExpiration = Date.from(accessExpirationInstant);
     return Jwts.builder()
         .setSubject(userDto.getEmail())
         .setExpiration(accessExpiration)
-        .signWith(accessSecret)
+        .signWith(algorithm,getPrivateKey(privateKeyFileName))
         .claim("email",userDto.getEmail())
         .claim("password",userDto.getPassword())
         .compact();
   }
 
-  public String generateRefreshToken(UserDto userDto){
-     LocalDateTime now = LocalDateTime.now();
-     Instant refreshExpirationInstant = now.plusDays(25).atZone(ZoneId.systemDefault()).toInstant();
-     Date refreshExpiration = Date.from(refreshExpirationInstant);
-     return Jwts.builder()
-         .setSubject(userDto.getEmail())
-         .setExpiration(refreshExpiration)
-         .signWith(refreshSecret)
-         .compact();
+  public String generateRefreshToken(UserDto userDto)
+      throws IOException, NoSuchAlgorithmException, InvalidKeySpecException {
+    LocalDateTime now = LocalDateTime.now();
+    Instant refreshExpirationInstant = now.plusDays(25).atZone(ZoneId.systemDefault()).toInstant();
+    Date refreshExpiration = Date.from(refreshExpirationInstant);
+    return Jwts.builder()
+        .setSubject(userDto.getEmail())
+        .setExpiration(refreshExpiration)
+        .signWith(getPrivateKey(privateKeyFileName))
+        .compact();
   }
 
-  public boolean validateAccessToken(String accessToken){
-    return validateToken(accessToken,accessSecret);
-  }
-  public boolean validateRefreshToken(String accessToken){
-    return validateToken(accessToken,accessSecret);
+  public boolean validateAccessToken(String accessToken) {
+    return validateToken(accessToken);
   }
 
-  private boolean validateToken(String token, Key secret){
+  public boolean validateRefreshToken(String accessToken) {
+    return validateToken(accessToken);
+  }
+
+  private boolean validateToken(String token) {
     try {
       Jwts.parserBuilder()
-          .setSigningKey(secret)
+          .setSigningKey(getPrivateKey(privateKeyFileName))
           .build()
           .parseClaimsJws(token);
       return true;
@@ -123,20 +130,51 @@ public class JwtProvider implements Serializable {
     return false;
   }
 
-  public Claims getAccessClaims(String token){
-    return getClaims(token,refreshSecret);
+  public KeyPair getKeyPair() throws GeneralSecurityException, IOException {
+    return new KeyPair(getPublicKey(publicKeyFileName),getPrivateKey(privateKeyFileName));
   }
 
-  public Claims getRefreshClaims(String token){
-    return getClaims(token,refreshSecret);
+  public String getJWK() throws IOException, GeneralSecurityException {
+
+    KeyPair keyPair = getKeyPair();
+
+    JWK jwk = new RSAKey.Builder((RSAPublicKey) keyPair.getPublic())
+        .privateKey(keyPair.getPrivate())
+        .keyUse(KeyUse.SIGNATURE)
+        .keyID(UUID.randomUUID().toString())
+        .build();
+    return jwk.toJSONString();
   }
 
-  private Claims getClaims (String token,Key secret){
+
+  public Claims getAccessClaims(String token)
+      throws IOException, NoSuchAlgorithmException, InvalidKeySpecException {
+    return getClaims(token);
+  }
+
+  public Claims getRefreshClaims(String token)
+      throws IOException, NoSuchAlgorithmException, InvalidKeySpecException {
+    return getClaims(token);
+  }
+
+  private Claims getClaims(String token)
+      throws IOException, NoSuchAlgorithmException, InvalidKeySpecException {
     return Jwts.parserBuilder()
-        .setSigningKey(secret)
+        .setSigningKey(getPrivateKey(privateKeyFileName))
         .build()
         .parseClaimsJws(token)
         .getBody();
   }
+
+  	private static String getKey(String filename) throws IOException {
+	    String strKeyPEM = "";
+	    BufferedReader br = new BufferedReader(new FileReader(filename));
+	    String line;
+	    while ((line = br.readLine()) != null) {
+	        strKeyPEM += line + "\n";
+	    }
+	    br.close();
+	    return strKeyPEM;
+	}
 
 }

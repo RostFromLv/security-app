@@ -4,6 +4,9 @@ import com.learn.security.JwtAuthentication;
 import com.learn.security.JwtProvider;
 import com.learn.security.JwtUtils;
 import io.jsonwebtoken.Claims;
+import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -37,7 +40,16 @@ public class BearerTokenAuthenticationConverter implements AuthenticationConvert
 
     jwtProvider.validateAccessToken(token);
 
-    Claims claims = jwtProvider.getAccessClaims(token);
+    Claims claims = null;
+    try {
+      claims = jwtProvider.getAccessClaims(token);
+    } catch (IOException e) {
+      e.printStackTrace();
+    } catch (NoSuchAlgorithmException e) {
+      e.printStackTrace();
+    } catch (InvalidKeySpecException e) {
+      e.printStackTrace();
+    }
     JwtAuthentication authentication = JwtUtils.generate(claims);
 
     return new UsernamePasswordAuthenticationToken(authentication.getPrincipal(), authentication.getCredentials());
