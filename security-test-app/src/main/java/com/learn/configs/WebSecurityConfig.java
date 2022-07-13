@@ -5,7 +5,6 @@ import com.learn.jwt.BearerTokenAuthenticationConverter;
 import com.learn.jwt.PostgresUser;
 import com.learn.security.JwtProvider;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -13,7 +12,6 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.AuthenticationConverter;
-import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
@@ -35,19 +33,18 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     http = http.cors().and().csrf().disable();
 
-
     http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
-    http.exceptionHandling()
-        .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED));
 
     http.authorizeRequests()
-        .antMatchers("/api/v1/auth/**", "/api/v1/users/**").permitAll()
-        .anyRequest().authenticated();
-//        .and()
-//        .formLogin().loginPage("/login").permitAll()
-//        .and()
-//        .oauth2Login();
+          .antMatchers("/api/v1/auth/**", "/api/v1/users/**").permitAll()
+          .antMatchers("/login","/**").permitAll()
+          .anyRequest().authenticated()
+          .and()
+          .formLogin()
+          .and()
+          .oauth2Login().defaultSuccessUrl("/api/v1/cars");
+
 
     DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
 
@@ -73,8 +70,5 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
       }
     };
   }
-
-
-
 
 }
