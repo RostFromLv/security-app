@@ -21,8 +21,8 @@ spring:
     password: ${spring.datasource.password}
   datasource:
     url: jdbc:postgresql://localhost:5432/cars
-    username: postgres
-    password: postgres
+    username: root
+    password: root
     driver-class-name: org.postgresql.Driver
   security:
     oauth2:
@@ -31,6 +31,7 @@ spring:
           facebook:
             clientId: 380406904202969
             clientSecret: c0d6ddef5ea359c6747c6ead9eec8f1c
+            redirectUrl: http://localhost:8070/login/oauth2/code/github
           google:
             clientId: 712056738368-vdgcumqhctjgnspbt1vgr6ajjdsiuvqg.apps.googleusercontent.com
             clientSecret: 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
