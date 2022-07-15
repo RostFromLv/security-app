@@ -8,6 +8,4 @@ import org.springframework.stereotype.Service;
 @Service
 public class CarServiceImpl extends AbstractDataService<Integer, Car, CarDto> implements CarService{
 
-
-
 }

@@ -1,8 +1,12 @@
 package com.learn.domain;
 
 
-import javax.persistence.CascadeType;
+import com.booking.data.converter.Convertible;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -18,13 +22,20 @@ import lombok.NoArgsConstructor;
 @Table(name = "security_user")
 @AllArgsConstructor
 @NoArgsConstructor
-public class SecurityUser {
+public class SecurityUser implements Convertible {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long id;
+  private Integer id;
 
-  @OneToOne(cascade = CascadeType.ALL)
+  @Column(name = "principal_name")
+  private String principalName;
+
+  @Enumerated(value = EnumType.STRING)
+  @Column(name = "auth_provider")
+  private AuthenticatorProvider authProvider;
+
+  @OneToOne
+  @JsonManagedReference
   @JoinColumn(name = "user_id",referencedColumnName = "id")
   private User user;
-
 }

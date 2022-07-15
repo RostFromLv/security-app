@@ -3,7 +3,10 @@ package com.learn.configs;
 import com.learn.jwt.AuthenticationFilter;
 import com.learn.jwt.BearerTokenAuthenticationConverter;
 import com.learn.jwt.PostgresUser;
+import com.learn.outh.CustomOauth2UserService;
+import com.learn.outh.Oauth2LoginSuccessHandler;
 import com.learn.security.JwtProvider;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -19,11 +22,18 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
   private final JwtProvider jwtProvider;
   private final PostgresUser userDetailsService;
+  private final CustomOauth2UserService userService;
+  private final Oauth2LoginSuccessHandler successHandler;
 
+  @Autowired
   public WebSecurityConfig(JwtProvider jwtProvider,
-                           PostgresUser userDetailsService) {
+                           PostgresUser userDetailsService,
+                           CustomOauth2UserService userService,
+                           Oauth2LoginSuccessHandler successHandler) {
     this.jwtProvider = jwtProvider;
     this.userDetailsService = userDetailsService;
+    this.userService = userService;
+    this.successHandler = successHandler;
   }
 
 
@@ -34,10 +44,14 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     http
         .authorizeRequests()
+        .antMatchers("/oauth2/**").permitAll()
         .antMatchers("/login*").permitAll()
         .anyRequest().authenticated()
         .and().formLogin()
-        .and().oauth2Login();
+        .and().oauth2Login()
+        .userInfoEndpoint().userService(userService)
+        .and()
+        .successHandler(successHandler);
 
     DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
 
