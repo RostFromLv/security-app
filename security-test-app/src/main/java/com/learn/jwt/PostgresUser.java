@@ -19,8 +19,6 @@ public class PostgresUser implements UserDetailsService {
     this.userService = userService;
   }
 
-
-
   @Override
   public UserDetails loadUserByUsername(String userEmail) throws UsernameNotFoundException {
 
