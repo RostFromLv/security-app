@@ -1,4 +1,4 @@
-package com.learn.outh;
+package com.learn.outh.user;
 
 import java.util.Collection;
 import java.util.Map;
@@ -6,12 +6,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 
-public class CustomOauth2User implements OAuth2User {
+public class FacebookOauth2User implements OAuth2User {
 
   private  final OAuth2User oAuth2User;
 
   @Autowired
-  public CustomOauth2User(OAuth2User oAuth2User) {
+  public FacebookOauth2User(OAuth2User oAuth2User) {
     this.oAuth2User = oAuth2User;
   }
 
@@ -33,5 +33,6 @@ public class CustomOauth2User implements OAuth2User {
   public String getEmail(){
     return oAuth2User.getAttribute("email");
   }
+
   public String getPrincipalName() {return  oAuth2User.getAttribute("id");}
 }
