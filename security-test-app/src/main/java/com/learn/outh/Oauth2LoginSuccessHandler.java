@@ -3,6 +3,7 @@ package com.learn.outh;
 import com.learn.domain.AuthenticatorProvider;
 import com.learn.model.SecurityUserDto;
 import com.learn.model.UserDto;
+import com.learn.outh.user.CustomOauth2User;
 import com.learn.service.SecurityUserService;
 import com.learn.service.UserService;
 import java.io.IOException;
@@ -38,6 +39,8 @@ public class Oauth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
     Assert.notNull(provider,"Unknown provider!");
 
     CustomOauth2User oauth2User = (CustomOauth2User) authentication.getPrincipal();
+    System.err.println(((CustomOauth2User) authentication.getPrincipal()).getAttributes());
+
     String principalName = oauth2User.getPrincipalName();
     String email = oauth2User.getEmail();
     String name = oauth2User.getName();
@@ -45,16 +48,17 @@ public class Oauth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
     String lastName = splitNameToFirstNameAndLastName(name)[1];
     name = splitNameToFirstNameAndLastName(name)[0];
 
-    UserDto user = userService.findUserByEmail(email);
+    UserDto dbUser = userService.findUserByEmail(email);
 
-    if (user == null && !securityUserService.existByUserPrincipalName(principalName)){
+    System.out.println(principalName);
+    if (dbUser == null && !securityUserService.existByUserPrincipalName(principalName)){
       UserDto createdUser = userService.createUserAfterSuccessOauthLogin(name,email,lastName,provider);
       securityUserService.create(createSecurityDto(principalName,createdUser.getId(),provider));
     }else {
       UserDto target = new UserDto(null,email,null,name,lastName);
 
-      if (userService.userWasChanged(user,target)){
-        userService.update(target,user.getId());
+      if (userService.userWasChanged(dbUser,target)){
+        userService.update(target, dbUser.getId());
       }
     }
 

@@ -21,8 +21,8 @@ spring:
     password: ${spring.datasource.password}
   datasource:
     url: jdbc:postgresql://localhost:5432/cars
-    username: root
-    password: root
+    username: postgres
+    password: postgres
     driver-class-name: org.postgresql.Driver
   security:
     oauth2:
@@ -33,14 +33,19 @@ spring:
             clientSecret: c0d6ddef5ea359c6747c6ead9eec8f1c
             scope:
               - email
+              - public_profile
           google:
             clientId: 712056738368-vdgcumqhctjgnspbt1vgr6ajjdsiuvqg.apps.googleusercontent.com
             clientSecret: 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
+            scope:
               - email
+              - profile
           github:
             clientId: Iv1.c9dafd6635a9e45f
-            clientSecret: 011b57f59edb8fa9038a4f0e66bde8382306e151
-              - email
+            clientSecret: 436965a0b0f24848d11bc534d72801924e1644cc
+            scope:
+              - read:user
+              - user:email
     filter:
       order: 5
     user:
