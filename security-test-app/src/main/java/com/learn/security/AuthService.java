@@ -34,7 +34,6 @@ public class AuthService {
     if (encoder.matches(jwtRequest.getPassword(), user.getPassword())) {
       final String accessToken = jwtProvider.generateAccessToken(user);
 
-
       final String refreshToken = jwtProvider.generateRefreshToken(user);
       refreshStorage.put(user.getEmail(), refreshToken);
       return new JwtResponse(accessToken, refreshToken);
