@@ -1,38 +1,19 @@
 package com.learn.outh.user;
 
-import java.util.Collection;
 import java.util.Map;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.oauth2.core.user.OAuth2User;
 
-public class CustomOauth2User implements OAuth2User {
+public abstract class CustomOauth2User {
+  protected Map<String,Object> attributes;
 
-  private  final OAuth2User oAuth2User;
-
-  @Autowired
-  public CustomOauth2User(OAuth2User oAuth2User) {
-    this.oAuth2User = oAuth2User;
+  public CustomOauth2User(Map<String, Object> attributes) {
+    this.attributes = attributes;
   }
 
-  @Override
-  public Map<String, Object> getAttributes() {
-    return oAuth2User.getAttributes();
+  public  Map<String,Object> getAttributes(){
+    return attributes;
   }
 
-  @Override
-  public Collection<? extends GrantedAuthority> getAuthorities() {
-    return oAuth2User.getAuthorities();
-  }
-
-  @Override
-  public String getName() {
-    return oAuth2User.getAttribute("name");
-  }
-
-  public String getEmail(){
-    return oAuth2User.getAttribute("email");
-  }
-
-  public String getPrincipalName() {return  oAuth2User.getAttribute("id");}
+  public abstract String getId();
+  public abstract String getName();
+  public abstract String getEmail();
 }

@@ -3,10 +3,11 @@ package com.learn.domain;
 import com.booking.data.converter.Convertible;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -29,6 +30,10 @@ public class User  implements Convertible {
   private String firstName;
   @Column
   private String lastName;
-  @OneToOne(mappedBy = "user")
-  private SecurityUser securityUser;
+
+  @Enumerated(EnumType.STRING)
+  private AuthenticatorProvider provider;
+
+  @Column
+  private String providerId;
 }

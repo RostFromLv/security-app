@@ -34,7 +34,6 @@ public class AuthenticationFilter extends OncePerRequestFilter {
 
     Authentication authentication = this.converter.convert(request);
 
-
     if (authentication == null) {
       log.error("Authentication is null");
       filterChain.doFilter(request, response);
