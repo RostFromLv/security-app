@@ -1,4 +1,4 @@
-package com.learn.outh;
+package com.learn.security.outh;
 
 import com.learn.domain.User;
 import java.util.Collection;

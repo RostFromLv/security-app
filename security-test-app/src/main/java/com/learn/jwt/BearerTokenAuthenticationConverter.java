@@ -43,11 +43,7 @@ public class BearerTokenAuthenticationConverter implements AuthenticationConvert
     Claims claims = null;
     try {
       claims = jwtProvider.getAccessClaims(token);
-    } catch (IOException e) {
-      e.printStackTrace();
-    } catch (NoSuchAlgorithmException e) {
-      e.printStackTrace();
-    } catch (InvalidKeySpecException e) {
+    } catch (IOException | NoSuchAlgorithmException | InvalidKeySpecException e) {
       e.printStackTrace();
     }
     JwtAuthentication authentication = JwtUtils.generate(claims);

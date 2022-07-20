@@ -1,4 +1,4 @@
-package com.learn.outh.user;
+package com.learn.security.outh.user;
 
 import java.util.Map;
 

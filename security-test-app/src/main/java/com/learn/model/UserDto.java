@@ -23,8 +23,8 @@ public class UserDto implements Convertible {
   @NotNull
 
   private String firstName;
-  @NotNull
 
+  @NotNull
   private String lastName;
 
   @NotNull

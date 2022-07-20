@@ -1,7 +1,8 @@
-package com.learn.outh;
+package com.learn.security.outh;
 
-import static com.learn.outh.HttpCookieOauth2AuthorizationRequestRepository.redirectUriParamCookieName;
+import static com.learn.security.outh.HttpCookieOauth2AuthorizationRequestRepository.redirectUriParamCookieName;
 
+import com.learn.model.UserDto;
 import com.learn.security.JwtProvider;
 import com.learn.service.UserService;
 import java.io.IOException;
@@ -13,7 +14,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.security.web.firewall.RequestRejectedException;
@@ -44,7 +44,6 @@ public class Oauth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
   public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
                                       Authentication authentication)  throws IOException {
 
-    System.out.println("Success authentication!");
     String targetUrl = null;
     try {
       targetUrl = determinateTargetUrl(request,response,authentication);
@@ -53,9 +52,8 @@ public class Oauth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
     }
 
     if (response.isCommitted()){
-      logger.debug("Response has already been commited. Unable to redirect to: "+targetUrl);
+      logger.debug("Response has already been committed . Unable to redirect to: "+targetUrl);
     }
-    response.setStatus(HttpStatus.TEMPORARY_REDIRECT.value());
     clearAuthenticationAttributes(request,response);
     getRedirectStrategy().sendRedirect(request,response,targetUrl);
   }
@@ -63,15 +61,20 @@ public class Oauth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
   protected String determinateTargetUrl(HttpServletRequest request,HttpServletResponse response,Authentication authentication)
       throws Exception {
     Optional<String> redirectUri = CookieUtils.getCookie(request, redirectUriParamCookieName).map(Cookie::getValue);
+
     if (redirectUri.isPresent() && !isAuthorizedRedirectUri(redirectUri.get())){
       throw new RequestRejectedException("Sorry! Wrong redirect URI and we can`t proceed with the authentication");
     }
     String targetUrl = redirectUri.orElse(getDefaultTargetUrl());
-    String token  = jwtProvider.generateAccessToken(userService.findUserByEmail(authentication.getName()));
-    String refreshToken = jwtProvider.generateRefreshToken(userService.findUserByEmail(authentication.getName()));
+
+
+    UserDto userDto = userService.findUserByEmail(authentication.getName());
+    String token  = jwtProvider.generateAccessToken(userDto);
+    String refreshToken = jwtProvider.generateRefreshToken(userDto);
     return UriComponentsBuilder.fromUriString(targetUrl)
         .queryParam("token",token)
         .queryParam("refreshToken",refreshToken)
+        .queryParam("providerId",userDto.getProviderId())
         .build().toString();
   }
 

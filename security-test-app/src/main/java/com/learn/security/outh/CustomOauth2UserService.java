@@ -1,15 +1,16 @@
-package com.learn.outh;
+package com.learn.security.outh;
 
 import com.learn.domain.AuthenticatorProvider;
 import com.learn.domain.User;
-import com.learn.outh.user.CustomOauth2User;
-import com.learn.outh.user.Oauth2UserFactory;
+import com.learn.security.outh.user.CustomOauth2User;
+import com.learn.security.outh.user.Oauth2UserFactory;
 import com.learn.service.repository.UserRepository;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
@@ -32,7 +33,6 @@ public class CustomOauth2UserService extends DefaultOAuth2UserService {
   public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
 
     OAuth2User user = super.loadUser(userRequest);
-
     try {
       return processOauth2ser(userRequest, user);
     } catch (AuthenticationException e) {
@@ -45,6 +45,7 @@ public class CustomOauth2UserService extends DefaultOAuth2UserService {
   private OAuth2User processOauth2ser(OAuth2UserRequest request, OAuth2User oAuth2User) {
     String registrationId = request.getClientRegistration().getRegistrationId();
     CustomOauth2User customOauth2User = Oauth2UserFactory.getOauth2User(registrationId, oAuth2User.getAttributes());
+
 
     if (customOauth2User.getEmail() == null || customOauth2User.getEmail().isEmpty()) {
       throw new OAuth2AuthenticationException("Provider email not found(" + registrationId + ")");
@@ -77,6 +78,7 @@ public class CustomOauth2UserService extends DefaultOAuth2UserService {
     user.setFirstName(userNameCredentials[0]);
     user.setLastName(userNameCredentials[1]);
     user.setEmail(oauth2User.getEmail());
+    user.setPassword(new BCryptPasswordEncoder().encode("passWord"));
     log.debug("Registered new user:" + user);
     return userRepository.save(user);
   }
