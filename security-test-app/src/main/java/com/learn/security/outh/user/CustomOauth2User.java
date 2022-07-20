@@ -1,8 +1,9 @@
-package com.learn.outh.user;
+package com.learn.security.outh.user;
 
 import java.util.Map;
 
 public abstract class CustomOauth2User {
+
   protected Map<String,Object> attributes;
 
   public CustomOauth2User(Map<String, Object> attributes) {
