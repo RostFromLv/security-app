@@ -4,17 +4,14 @@ import com.learn.jwt.AuthenticationFilter;
 import com.learn.jwt.BearerTokenAuthenticationConverter;
 import com.learn.jwt.PostgresUser;
 import com.learn.security.JwtProvider;
+import com.learn.security.outh.CustomOauth2SuccessHandler;
 import com.learn.security.outh.CustomOauth2UserService;
-import com.learn.security.outh.HttpCookieOauth2AuthorizationRequestRepository;
-import com.learn.security.outh.Oauth2LoginSuccessHandler;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.AuthenticationConverter;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -25,13 +22,14 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
   private final JwtProvider jwtProvider;
   private final PostgresUser userDetailsService;
-  private final Oauth2LoginSuccessHandler successHandler;
+  private final CustomOauth2SuccessHandler successHandler;
   private final CustomOauth2UserService customOauth2UserService;
+
 
   @Autowired
   public WebSecurityConfig(JwtProvider jwtProvider,
                            PostgresUser userDetailsService,
-                           Oauth2LoginSuccessHandler successHandler,
+                           CustomOauth2SuccessHandler successHandler,
                            CustomOauth2UserService customOauth2UserService) {
     this.jwtProvider = jwtProvider;
     this.userDetailsService = userDetailsService;
@@ -45,7 +43,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     http = http.cors().and().csrf().disable();
 
-    http = http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and();
+//    http = http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and();
 
     http
         .authorizeRequests()
@@ -55,17 +53,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
         .and().formLogin()
         .and().oauth2Login()
-
-        .authorizationEndpoint().baseUri("/oauth2/authorize")
-        .authorizationRequestRepository(cookieOauth2AuthorizationRequestRepository())
-        .and()
-
-        .userInfoEndpoint().userService(customOauth2UserService)
-        .and()
-
-        .redirectionEndpoint().baseUri("/oauth2/callback/*")
-        .and()
-
         .userInfoEndpoint().userService(customOauth2UserService)
         .and()
         .successHandler(successHandler);
@@ -95,8 +82,4 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     };
   }
 
-  @Bean
-  public HttpCookieOauth2AuthorizationRequestRepository cookieOauth2AuthorizationRequestRepository(){
-    return new HttpCookieOauth2AuthorizationRequestRepository();
-  }
 }

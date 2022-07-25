@@ -6,6 +6,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -34,8 +35,11 @@ public class AuthenticationFilter extends OncePerRequestFilter {
 
     Authentication authentication = this.converter.convert(request);
 
-    if (authentication == null) {
+    if (authentication == null || request.getCookies() == null) {
       log.error("Authentication is null");
+      System.out.println(request.getHeader(HttpHeaders.LOCATION));
+      System.out.println(request.getContextPath());
+      System.out.println(request.getHeaderNames());
       filterChain.doFilter(request, response);
       return;
     }

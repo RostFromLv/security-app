@@ -13,7 +13,7 @@ public class HttpCookieOauth2AuthorizationRequestRepository implements
 
   public final static String oauth2AuthorizationRequestCookieName = "oauth2_auth_request";
   public static final String redirectUriParamCookieName = "redirect_uri";
-  private static final int cookieExpiredSeconds = 120;
+  private static final int cookieExpiredSeconds = 180;
 
   @Override
   public OAuth2AuthorizationRequest loadAuthorizationRequest(HttpServletRequest request) {

@@ -3,8 +3,6 @@ package com.learn.domain;
 import com.booking.data.converter.Convertible;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -18,7 +16,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "users")
-public class User  implements Convertible {
+public class User implements Convertible {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Integer id;
@@ -31,8 +29,8 @@ public class User  implements Convertible {
   @Column
   private String lastName;
 
-  @Enumerated(EnumType.STRING)
-  private AuthenticatorProvider provider;
+  @Column
+  private String provider;
 
   @Column
   private String providerId;

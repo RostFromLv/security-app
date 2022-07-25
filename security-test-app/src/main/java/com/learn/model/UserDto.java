@@ -1,7 +1,6 @@
 package com.learn.model;
 
 import com.booking.data.converter.Convertible;
-import com.learn.domain.AuthenticatorProvider;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -28,7 +27,7 @@ public class UserDto implements Convertible {
   private String lastName;
 
   @NotNull
-  private AuthenticatorProvider provider;
+  private String provider;
 
   @NotNull
   private String providerId;
