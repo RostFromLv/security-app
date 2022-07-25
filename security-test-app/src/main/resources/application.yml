@@ -42,7 +42,7 @@ spring:
               - profile
           github:
             clientId: Iv1.c9dafd6635a9e45f
-            clientSecret: 436965a0b0f24848d11bc534d72801924e1644cc
+            clientSecret: 401fe127c605c148fb4df50b1beb56a42922e2b4
             scope:
               - read:user
               - user:email
@@ -65,5 +65,4 @@ logging:
   level:
 #    org.springframework.security: trace
     root: info
-
 authorizedRedirectUris: http://localhost:8070/home

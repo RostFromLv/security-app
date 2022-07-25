@@ -34,7 +34,8 @@ public class CustomOauth2UserService extends DefaultOAuth2UserService {
 
     OAuth2User user = super.loadUser(userRequest);
     try {
-      return processOauth2ser(userRequest, user);
+      processOauth2ser(userRequest, user);
+      return user;
     } catch (AuthenticationException e) {
       throw e;
     } catch (Exception e) {
@@ -44,8 +45,7 @@ public class CustomOauth2UserService extends DefaultOAuth2UserService {
 
   private OAuth2User processOauth2ser(OAuth2UserRequest request, OAuth2User oAuth2User) {
     String registrationId = request.getClientRegistration().getRegistrationId();
-    CustomOauth2User customOauth2User = Oauth2UserFactory.getOauth2User(registrationId, oAuth2User.getAttributes());
-
+    CustomOauth2User customOauth2User  =  Oauth2UserFactory.getOauth2User(registrationId,oAuth2User.getAttributes());
 
     if (customOauth2User.getEmail() == null || customOauth2User.getEmail().isEmpty()) {
       throw new OAuth2AuthenticationException("Provider email not found(" + registrationId + ")");
@@ -56,8 +56,7 @@ public class CustomOauth2UserService extends DefaultOAuth2UserService {
 
     if (userOptional.isPresent()) {
       user = userOptional.get();
-      if (!user.getProvider().equals(
-          AuthenticatorProvider.valueOf(request.getClientRegistration().getRegistrationId()))) {
+      if (!user.getProvider().equals(AuthenticatorProvider.valueOf(request.getClientRegistration().getRegistrationId()))) {
         throw new OAuth2AuthenticationException(
             "You are signed up with provider:" + user.getProvider() + ". Please use your: " +
                 user.getProvider() + " provider to login");
@@ -73,7 +72,7 @@ public class CustomOauth2UserService extends DefaultOAuth2UserService {
     User user = new User();
     String[] userNameCredentials = splitUserNameCredentials(oauth2User.getName());
 
-    user.setProvider(AuthenticatorProvider.valueOf(oAuth2UserRequest.getClientRegistration().getRegistrationId()));
+    user.setProvider(oAuth2UserRequest.getClientRegistration().getRegistrationId());
     user.setProviderId(oauth2User.getId());
     user.setFirstName(userNameCredentials[0]);
     user.setLastName(userNameCredentials[1]);

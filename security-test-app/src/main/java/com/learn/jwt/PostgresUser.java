@@ -1,6 +1,6 @@
 package com.learn.jwt;
 
-import com.learn.service.UserService;
+import com.learn.service.repository.UserRepository;
 import java.util.ArrayList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.User;
@@ -12,18 +12,20 @@ import org.springframework.stereotype.Component;
 @Component
 public class PostgresUser implements UserDetailsService {
 
-  private final UserService userService;
+  private final UserRepository userRepository;
 
   @Autowired
-  private PostgresUser(UserService userService) {
-    this.userService = userService;
+  private PostgresUser(UserRepository userRepository) {
+    this.userRepository = userRepository;
   }
 
   @Override
   public UserDetails loadUserByUsername(String userEmail) throws UsernameNotFoundException {
 
-    String userPassword =  userService.findUserByEmail(userEmail).getPassword();
+    String userPassword =  userRepository.findByEmail(userEmail).get().getPassword();
 
     return new User(userEmail, userPassword,new ArrayList<>());
   }
+
+
 }

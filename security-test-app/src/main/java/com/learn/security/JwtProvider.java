@@ -80,7 +80,7 @@ public class JwtProvider implements Serializable {
 
     SignatureAlgorithm algorithm = SignatureAlgorithm.RS256;
      LocalDateTime now = LocalDateTime.now();
-     Instant accessExpirationInstant = now.plusDays(1).atZone(ZoneId.systemDefault()).toInstant();
+     Instant accessExpirationInstant = now.plusHours(12).atZone(ZoneId.systemDefault()).toInstant();
      Date accessExpiration = Date.from(accessExpirationInstant);
     return Jwts.builder()
         .setSubject(userDto.getEmail())
