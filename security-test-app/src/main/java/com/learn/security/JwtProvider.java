@@ -167,14 +167,14 @@ public class JwtProvider implements Serializable {
   }
 
   	private static String getKey(String filename) throws IOException {
-	    String strKeyPEM = "";
+	    StringBuilder strKeyPEM = new StringBuilder();
 	    BufferedReader br = new BufferedReader(new FileReader(filename));
 	    String line;
 	    while ((line = br.readLine()) != null) {
-	        strKeyPEM += line + "\n";
+	        strKeyPEM.append(line).append("\n");
 	    }
 	    br.close();
-	    return strKeyPEM;
+	    return strKeyPEM.toString();
 	}
 
 }

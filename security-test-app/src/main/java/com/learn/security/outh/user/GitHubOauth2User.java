@@ -20,5 +20,5 @@ public class GitHubOauth2User extends CustomOauth2User {
  }
 
  @Override
- public String getId() {return  (String) attributes.get("id");}
+ public String getId() {return  ((Integer) attributes.get("id")).toString();}
 }

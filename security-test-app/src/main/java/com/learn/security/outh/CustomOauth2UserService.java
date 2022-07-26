@@ -1,6 +1,5 @@
 package com.learn.security.outh;
 
-import com.learn.domain.AuthenticatorProvider;
 import com.learn.domain.User;
 import com.learn.security.outh.user.CustomOauth2User;
 import com.learn.security.outh.user.Oauth2UserFactory;
@@ -43,7 +42,7 @@ public class CustomOauth2UserService extends DefaultOAuth2UserService {
     }
   }
 
-  private OAuth2User processOauth2ser(OAuth2UserRequest request, OAuth2User oAuth2User) {
+  private void processOauth2ser(OAuth2UserRequest request, OAuth2User oAuth2User) {
     String registrationId = request.getClientRegistration().getRegistrationId();
     CustomOauth2User customOauth2User  =  Oauth2UserFactory.getOauth2User(registrationId,oAuth2User.getAttributes());
 
@@ -54,18 +53,16 @@ public class CustomOauth2UserService extends DefaultOAuth2UserService {
     Optional<User> userOptional = userRepository.findByEmail(customOauth2User.getEmail());
     User user;
 
-    if (userOptional.isPresent()) {
+    if (!userOptional.isEmpty()) {
       user = userOptional.get();
-      if (!user.getProvider().equals(AuthenticatorProvider.valueOf(request.getClientRegistration().getRegistrationId()))) {
-        throw new OAuth2AuthenticationException(
-            "You are signed up with provider:" + user.getProvider() + ". Please use your: " +
+      if (!user.getProvider().equals(registrationId)) {
+        throw new IllegalArgumentException("You are signed up with provider:" + user.getProvider() + ". Please use your: " +
                 user.getProvider() + " provider to login");
       }
-      user = updateExistUser(user, customOauth2User);
+      updateExistUser(user, customOauth2User);
     } else {
-      user = registerNewUser(request, customOauth2User);
+      registerNewUser(request, customOauth2User);
     }
-    return UserPrincipal.create(user, customOauth2User.getAttributes());
   }
 
   private User registerNewUser(OAuth2UserRequest oAuth2UserRequest, CustomOauth2User oauth2User) {

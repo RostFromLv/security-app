@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 
@@ -32,10 +33,9 @@ public class CustomOauth2SuccessHandler implements AuthenticationSuccessHandler 
   @Override
   public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
                                       Authentication authentication) {
-    System.out.println("Success on authentication");
 
-    UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
-    String userEmail = userPrincipal.getUsername();
+    DefaultOAuth2User userPrincipal = (DefaultOAuth2User) authentication.getPrincipal();
+    String userEmail = userPrincipal.getAttribute("email");
     UserDto userDto = userService.findUserByEmail(userEmail);
 
     try {
@@ -48,12 +48,8 @@ public class CustomOauth2SuccessHandler implements AuthenticationSuccessHandler 
       response.setStatus(HttpStatus.TEMPORARY_REDIRECT.value());
       response.setHeader(HttpHeaders.LOCATION,redirectUrl);
 
-
     } catch (Exception e) {
       e.printStackTrace();
     }
-
-
-
   }
 }
