@@ -1,4 +1,4 @@
-package com.learn.jwt;
+package com.learn.jwt.converter;
 
 import com.learn.security.JwtAuthentication;
 import com.learn.security.JwtProvider;
@@ -7,37 +7,18 @@ import io.jsonwebtoken.Claims;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
-import javax.servlet.http.HttpServletRequest;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.web.authentication.AuthenticationConverter;
 
-public class BearerTokenAuthenticationConverter implements AuthenticationConverter {
-
+public abstract class BaseJWTConverter {
 
   private final JwtProvider jwtProvider;
 
-  @Autowired
-  public BearerTokenAuthenticationConverter(JwtProvider jwtProvider) {
+  public BaseJWTConverter(JwtProvider jwtProvider) {
     this.jwtProvider = jwtProvider;
   }
 
-
-  @Override
-  public Authentication convert(HttpServletRequest request) {
-
-    String header = request.getHeader(HttpHeaders.AUTHORIZATION);
-
-    if (header == null) {
-      return null;
-    }
-    String token = null;
-    if (header.startsWith("Bearer ")) {
-      token = header.substring(7);
-    }
-
+  protected Authentication convertByString(String token){
     jwtProvider.validateAccessToken(token);
 
     Claims claims = null;

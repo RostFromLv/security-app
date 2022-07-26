@@ -1,8 +1,10 @@
 package com.learn.configs;
 
 import com.learn.jwt.AuthenticationFilter;
-import com.learn.jwt.BearerTokenAuthenticationConverter;
 import com.learn.jwt.PostgresUser;
+import com.learn.jwt.converter.AuthenticationConverterChain;
+import com.learn.jwt.converter.BearerTokenAuthenticationConverter;
+import com.learn.jwt.converter.CookieConverter;
 import com.learn.security.JwtProvider;
 import com.learn.security.outh.CustomOauth2SuccessHandler;
 import com.learn.security.outh.CustomOauth2UserService;
@@ -12,6 +14,7 @@ import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.AuthenticationConverter;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -43,7 +46,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     http = http.cors().and().csrf().disable();
 
-//    http = http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and();
+    http = http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and();
 
     http
         .authorizeRequests()
@@ -58,11 +61,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         .successHandler(successHandler);
 
     DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
-
     authenticationProvider.setUserDetailsService(userDetailsService);
     authenticationProvider.setPasswordEncoder(noOpPasswordEncoder());
-    AuthenticationConverter converter = new BearerTokenAuthenticationConverter(jwtProvider);
-    AuthenticationFilter filter = new AuthenticationFilter(converter, authenticationProvider);
+
+    AuthenticationFilter filter = new AuthenticationFilter(getAuthenticationConverterChain(), authenticationProvider);
 
     http.addFilterBefore(filter, UsernamePasswordAuthenticationFilter.class);
   }
@@ -80,6 +82,18 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         return rawPassword.equals(encodedPassword);
       }
     };
+  }
+
+  private AuthenticationConverterChain getAuthenticationConverterChain(){
+    AuthenticationConverterChain converterChain = new AuthenticationConverterChain();
+
+    AuthenticationConverter bearerConverter = new BearerTokenAuthenticationConverter(jwtProvider);
+    converterChain.addConverter(bearerConverter);
+
+    AuthenticationConverter cookieJwtConverter = new CookieConverter();
+    converterChain.addConverter(cookieJwtConverter);
+
+    return converterChain;
   }
 
 }
