@@ -4,7 +4,7 @@ import com.learn.jwt.AuthenticationFilter;
 import com.learn.jwt.PostgresUser;
 import com.learn.jwt.converter.AuthenticationConverterChain;
 import com.learn.jwt.converter.BearerTokenAuthenticationConverter;
-import com.learn.jwt.converter.CookieConverter;
+import com.learn.jwt.converter.CookieJWTConverter;
 import com.learn.security.JwtProvider;
 import com.learn.security.outh.CustomOauth2SuccessHandler;
 import com.learn.security.outh.CustomOauth2UserService;
@@ -90,7 +90,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     AuthenticationConverter bearerConverter = new BearerTokenAuthenticationConverter(jwtProvider);
     converterChain.addConverter(bearerConverter);
 
-    AuthenticationConverter cookieJwtConverter = new CookieConverter();
+    AuthenticationConverter cookieJwtConverter = new CookieJWTConverter();
     converterChain.addConverter(cookieJwtConverter);
 
     return converterChain;

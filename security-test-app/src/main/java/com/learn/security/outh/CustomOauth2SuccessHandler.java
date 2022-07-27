@@ -3,8 +3,10 @@ package com.learn.security.outh;
 import com.learn.model.UserDto;
 import com.learn.security.JwtProvider;
 import com.learn.service.UserService;
+import java.io.IOException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
@@ -14,6 +16,7 @@ import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 
+@Slf4j
 @Component
 public class CustomOauth2SuccessHandler implements AuthenticationSuccessHandler {
 
@@ -32,8 +35,9 @@ public class CustomOauth2SuccessHandler implements AuthenticationSuccessHandler 
 
   @Override
   public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
-                                      Authentication authentication) {
+                                      Authentication authentication) throws IOException {
 
+    System.out.println("Authentication success");
     DefaultOAuth2User userPrincipal = (DefaultOAuth2User) authentication.getPrincipal();
     String userEmail = userPrincipal.getAttribute("email");
     UserDto userDto = userService.findUserByEmail(userEmail);
@@ -47,9 +51,10 @@ public class CustomOauth2SuccessHandler implements AuthenticationSuccessHandler 
 
       response.setStatus(HttpStatus.TEMPORARY_REDIRECT.value());
       response.setHeader(HttpHeaders.LOCATION,redirectUrl);
-
     } catch (Exception e) {
-      e.printStackTrace();
+      String errorMessage = "Authentication success handler step error.";
+      log.error(errorMessage);
+      response.sendError(500,errorMessage);
     }
   }
 }

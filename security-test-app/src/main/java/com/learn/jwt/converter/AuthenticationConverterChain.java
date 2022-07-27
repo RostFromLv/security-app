@@ -20,10 +20,11 @@ public class AuthenticationConverterChain implements AuthenticationConverter {
 
   @Override
   public Authentication convert(HttpServletRequest request) {
-    for (AuthenticationConverter converter:converters) {
-        if (converter.convert(request)!=null){
-          return converter.convert(request);
-        }
+    for (AuthenticationConverter converter : converters) {
+      Authentication auth = converter.convert(request);
+      if (auth != null) {
+        return auth;
+      }
     }
     return null;
   }

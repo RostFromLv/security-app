@@ -7,6 +7,7 @@ import io.jsonwebtoken.Claims;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
+import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 
@@ -25,7 +26,7 @@ public abstract class BaseJWTConverter {
     try {
       claims = jwtProvider.getAccessClaims(token);
     } catch (IOException | NoSuchAlgorithmException | InvalidKeySpecException e) {
-      e.printStackTrace();
+      throw new InternalAuthenticationServiceException("Cannot get/parse claims(BaseJWTConverter))");
     }
     JwtAuthentication authentication = JwtUtils.generate(claims);
 
